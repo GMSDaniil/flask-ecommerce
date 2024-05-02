@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    {% block styles %}
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+    {% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <div class="container">
+        <header class="blog-header py-3">
+          <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="col-4 pt-1">
+              <!-- <a class="link-secondary" href="#">Subscribe</a> -->
+            </div>
+            <div class="col-4 text-center">
+              <a class="blog-header-logo text-dark" href="{{ url_for('home') }}">GMShop</a>
+            </div>
+            <div class="col-4 d-flex justify-content-end align-items-center">
+
+              <!-- LOGIN -->
+              <a class="mx-4" href="{{ url_for('login') }}"><svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></a>
+
+              <!-- CART -->
+              <a class="position-relative"  type="button" data-bs-toggle="modal" data-bs-target="#cartModal"><svg fill="#000000" width="40px" height="40px" viewBox="0 0 32 32" id="icon" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><defs><style>.cls-1{fill:none;}</style></defs><title>shopping--bag</title><path d="M28.76,11.35A1,1,0,0,0,28,11H22V7a3,3,0,0,0-3-3H13a3,3,0,0,0-3,3v4H4a1,1,0,0,0-1,1.15L4.88,24.3a2,2,0,0,0,2,1.7H25.14a2,2,0,0,0,2-1.7L29,12.15A1,1,0,0,0,28.76,11.35ZM12,7a1,1,0,0,1,1-1h6a1,1,0,0,1,1,1v4H12ZM25.14,24H6.86L5.17,13H26.83Z"></path><rect id="_Transparent_Rectangle_" data-name="<Transparent Rectangle>" class="cls-1" width="32" height="32"></rect></g></svg>
+                {% if cart_quantity > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{cart_quantity}}
+                </span>
+                {% endif %}
+              </a>
+
+
+
+              <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                  <div class="modal-content">
+
+
+                    <div class="card mb-4">
+                      <div class="card-header py-3">
+                        <div class="row">
+                          <div class="col-8">
+                            <h5 class="mb-0">
+                              {% if cart_quantity > 0 %}
+                              Cart - {{cart_quantity}} items
+                              {% else %}
+                              Cart is empty
+                              {% endif %}
+                            </h5>
+                          </div>
+                          <div class="col-4">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="float: right;">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {% for product in cart %}
+                      <div class="card-body">
+                        <!-- Single item -->
+                        <div class="row">
+                          <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                            <!-- Image -->
+                            <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                              <img src="{{ product[0].img_src }}" style="height: 150px; width: auto;" alt="Blue Jeans Jacket">
+                              <a href="#">
+                                <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                              </a>
+                            </div>
+                            <!-- Image -->
+                          </div>
+          
+                          <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                            <!-- Data -->
+                            <a href="{{ url_for('show_product', id=product[0].id) }}" style="text-decoration: none; color: #000;"><strong>{{ product[0].name }}</strong></a>
+                            <p class="text-start ">
+                              {% if product[0].discount %}
+                              <p></p>
+                              <span class="text-decoration-line-through">{{ product[0].price}}</span>
+                              <strong>{{ (product[0].price - (product[0].price*product[0].discount/100))|round(2,'floor')}} €</strong>
+                              {% else %}
+                              <strong>{{ product[0].price }} €</strong>
+                              {% endif %}
+                              
+                            </p>
+                            <!-- <p>Color: blue</p>
+                            <p>Size: M</p> -->
+                            <a type="button" class="btn btn-primary btn-sm me-1 mb-2" title="Remove item" href="{{ url_for('remove_from_cart', id=product[0].id) }}">
+                              <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.663 1.5h-1.326c-1.069 0-1.49.09-1.921.27-.432.181-.792.453-1.084.82-.292.365-.493.746-.784 1.774L7.368 5H5a1 1 0 0 0 0 2h.563l.703 11.25c.082 1.32.123 1.98.407 2.481a2.5 2.5 0 0 0 1.083 1.017C8.273 22 8.935 22 10.258 22h3.484c1.323 0 1.985 0 2.502-.252a2.5 2.5 0 0 0 1.083-1.017c.284-.5.325-1.16.407-2.482L18.437 7H19a1 1 0 1 0 0-2h-2.367l-.18-.636c-.292-1.028-.493-1.409-.785-1.775a2.694 2.694 0 0 0-1.084-.819c-.431-.18-.852-.27-1.92-.27zm1.89 3.5-.025-.09c-.203-.717-.29-.905-.424-1.074a.696.696 0 0 0-.292-.221c-.2-.084-.404-.115-1.149-.115h-1.326c-.745 0-.95.031-1.149.115a.696.696 0 0 0-.292.221c-.135.169-.221.357-.424 1.074L9.446 5h5.108zM9.61 8.506a.75.75 0 0 0-.724.776l.297 8.495a.75.75 0 0 0 1.499-.053l-.297-8.494a.75.75 0 0 0-.775-.724zm4.008.724a.75.75 0 0 1 1.499.052l-.297 8.495a.75.75 0 0 1-1.499-.053l.297-8.494z" fill="#ffffff"></path></g></svg>
+                            </a>
+                            <a type="button" href="{{ url_for('add_to_wishlist', id = product[0].id) }}" class="btn btn-danger btn-sm mb-2" title="Move to the wish list">
+                              <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z" fill="#ffffff"></path> </g></svg>
+                            </a>
+                            <!-- Data -->
+                          </div>
+          
+                          <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                            <!-- Quantity -->
+                            
+                            <div class="row d-flex mb-4" style="max-width: 300px; float: right;">
+                              <p>Quantity: {{ product[1] }}</p>
+                            </div>
+                            <!-- Quantity -->
+          
+                            <!-- Price -->
+                            <p class="row text-start text-md-center">
+                              {% if product[0].discount %}                      
+                              <strong>Total: </strong>
+                              <span class="text-decoration-line-through">{{ product[0].price}}</span> 
+                              <strong class="card-text">{{ ((product[0].price - (product[0].price*product[0].discount/100))|round(2,'floor'))*product[1]}} €</strong>
+                              {% else %}
+                              <strong>Total: {{ product[0].price*product[1] }} €</strong>
+                              {% endif %}
+                            </p>
+                            <!-- Price -->
+                          </div>
+                        </div>
+                        <!-- Single item -->
+                      </div>
+                        
+                        <hr class="my-3">
+                        {% endfor %}
+                        {% if cart_quantity == 0 %}
+                        <div class="text-center my-4">
+                          <a class="btn btn-success btn-lg" href="{{ url_for('home') }}">
+                            Add items
+                          </a>
+                        </div>
+                        {% else %}
+
+                        {% if cart_total != cart_total_discount %}
+                        <h5 class="text-center"> Total: 
+                        <span class="text-decoration-line-through">{{ cart_total }}</span> 
+                        {{cart_total_discount}} €</h5>
+                        {% else %}
+                        <h5 class="text-center"> Total: {{ cart_total }} €</h5>
+
+                        {% endif %}
+                        <div class="row">
+                          <div class="col-6">
+                          <div class="text-center my-3">
+                            <a href="{{ url_for('cart') }}" type="button" class="btn btn-success btn-lg btn-block">
+                              View Cart
+                            </a>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="text-center my-3">
+                            <a type="button" href="{{ url_for('order') }}" class="btn btn-primary btn-lg btn-block">
+                              Go to checkout
+                            </a>
+                          </div>
+                        </div>
+                        </div>
+                        {% endif %}
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </header>
+      
+        <div class="nav-scroller py-1 mb-2">
+          <nav class="nav d-flex justify-content-between">
+            <!-- <a class="p-2 link-secondary" href="#">World</a>
+            <a class="p-2 link-secondary" href="#">U.S.</a>
+            <a class="p-2 link-secondary" href="#">Technology</a>
+            <a class="p-2 link-secondary" href="#">Design</a>
+            <a class="p-2 link-secondary" href="#">Culture</a>
+            <a class="p-2 link-secondary" href="#">Business</a>
+            <a class="p-2 link-secondary" href="#">Politics</a>
+            <a class="p-2 link-secondary" href="#">Opinion</a>
+            <a class="p-2 link-secondary" href="#">Science</a>
+            <a class="p-2 link-secondary" href="#">Health</a>
+            <a class="p-2 link-secondary" href="#">Style</a>
+            <a class="p-2 link-secondary" href="#">Travel</a> -->
+          </nav>
+        </div>
+      </div>
+    {% block content %}{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>

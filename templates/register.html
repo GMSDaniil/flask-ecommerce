@@ -1,0 +1,73 @@
+{% extends 'base.html' %} 
+{% block title %}Shop{% endblock %} 
+
+{% block content%}
+<div class="container">
+  <div class="row d-flex justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-6">
+      <div class="card" style="border-radius: 1rem; border-color: black;">
+        <div class="card-body p-5 text-center">
+          <div class="mb-md-5 mt-md-4 pb-5">
+            <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
+            <p class=" mb-5">
+              Please enter your username, email and password!
+            </p>
+            {% with errors = get_flashed_messages() %}
+            {% for error in errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            {% endwith %}
+            <form method="post" action="{{ url_for('register') }}">
+                <div class="form-outline form-white mb-4">
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control form-control-lg"
+                    />
+                    <label class="form-label" for="name">Username</label>
+                </div>
+                
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control form-control-lg"
+                />
+                <label class="form-label">Email</label>
+                
+
+                <div class="form-outline form-white mb-4">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control form-control-lg"
+                />
+                <label class="form-label" for="password">Password</label>
+                </div>
+
+                <!-- <p class="small mb-5 pb-lg-2">
+                <a class="" href="#!">Forgot password?</a>
+                </p> -->
+
+                <button class="btn btn-outline-dark btn-lg px-5" type="submit">
+                Regiser
+                </button>
+            </form>
+            
+          </div>
+
+          <div>
+            <p class="mb-0">
+              Already have an account?
+              <a href="{{ url_for('login') }}" class=" fw-bold">Login</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
